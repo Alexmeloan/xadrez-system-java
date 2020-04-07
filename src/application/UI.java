@@ -10,7 +10,6 @@ public class UI {
 			System.out.print((8-i) + " ");
 			for(int j=0; j<pecas.length; j++) {
 				printPeca(pecas[i][j]);
-				
 			}
 			System.out.println();
 		}

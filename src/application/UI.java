@@ -52,13 +52,6 @@ public class UI {
         System.out.print(" ");
 	}
 
-	/*private static void printPeca(PecaXadrez peca) {
-		if (peca == null) {
-			System.out.print("-");
-		} else {
-			System.out.print(peca);
-		}
-		System.out.print(" ");
-	}*/
+	
 
 }

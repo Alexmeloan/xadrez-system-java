@@ -15,6 +15,10 @@ public abstract class Peca {
 	
 	public abstract boolean[][] possiveisMovimentos();
 	
+	public boolean possiveisMovimentos(Posicao posicao) {
+		return possiveisMovimentos()[posicao.getLinha()][posicao.getColuna()];
+	}
+	
 	public boolean existeAlgumMovPossivel() {
 		boolean[][] mat = possiveisMovimentos();
 		for (int i=0; i<mat.length; i++ ) {

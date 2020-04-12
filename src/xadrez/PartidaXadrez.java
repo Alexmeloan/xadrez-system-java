@@ -29,8 +29,8 @@ public class PartidaXadrez {
 	public PecaXadrez executarMovimentoXadrez(PosicaoXadrez posicaoOrigem, PosicaoXadrez posicaoDestino ) {
 		Posicao origem = posicaoOrigem.posicionar();
 		Posicao destino = posicaoDestino.posicionar();
-		validarPosicaoOrigem(origem); // Método criado abaixo  
-		Peca capturarPeca = fazerMover(origem, destino); // Método "fazerMover" criado abaixo  
+		validarPosicaoOrigem(origem);   
+		Peca capturarPeca = fazerMover(origem, destino);   
 		return (PecaXadrez)capturarPeca;
 	}
 	
@@ -45,6 +45,9 @@ public class PartidaXadrez {
 		if (!tabuleiro.existeUmaPeca(posicao)) {
 			throw new XadrezException("já existe uma peça na posição de origem");
 		}
+		 if(!tabuleiro.peca(posicao).existeAlgumMovPossivel()) {
+			 throw new XadrezException("Não existe movimentos possíveis para a peça");
+		 }                                                           
 	}
 	
 	private void colocarNovaPeca(char coluna, int linha, PecaXadrez peca ) {

@@ -59,7 +59,7 @@ public class PartidaXadrez {
 	 } 
 	
 	private void validarPosicaoDestino(Posicao origem, Posicao destino) {
-		if (!tabuleiro.peca(origem).possiveisMovimentos(destino)) {
+		if (!tabuleiro.peca(origem).possivelMovimento(destino)) {
 			throw new XadrezException("A peça escolhida não pode se mover pra posição de destino");
 		}
 			
@@ -75,7 +75,7 @@ public class PartidaXadrez {
 		colocarNovaPeca('d', 2, new Torre(tabuleiro, Cor.BRANCO));
 		colocarNovaPeca('e', 2, new Torre(tabuleiro, Cor.BRANCO));
 		colocarNovaPeca('e', 1, new Torre(tabuleiro, Cor.BRANCO));
-		colocarNovaPeca('d', 1, new Torre(tabuleiro, Cor.BRANCO));
+		colocarNovaPeca('d', 1, new Rei(tabuleiro, Cor.BRANCO));
 
 		colocarNovaPeca('c', 7, new Torre(tabuleiro, Cor.PRETO));
 		colocarNovaPeca('c', 8, new Torre(tabuleiro, Cor.PRETO));

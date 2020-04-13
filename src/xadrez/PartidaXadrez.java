@@ -2,6 +2,7 @@ package xadrez;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import tabuleirojogo.Peca;
 import tabuleirojogo.Posicao;
@@ -14,9 +15,10 @@ public class PartidaXadrez {
 	private int turno;
 	private Cor jogadorAtual;
 	private Tabuleiro tabuleiro;
+	private boolean check;       //Por padrão começa com falso 
 	
-	private List<PecaXadrez> pecasNoTabuleiro = new ArrayList<>(); // Lista poderia ter sido criada com a classe ais genérica "Peca";
-	private List<PecaXadrez> pecasCapturadas = new ArrayList<>();
+	private List<Peca> pecasNoTabuleiro = new ArrayList<>(); 
+	private List<Peca> pecasCapturadas = new ArrayList<>();
 	
 	public PartidaXadrez() {
 		tabuleiro = new Tabuleiro(8, 8);
@@ -33,6 +35,10 @@ public class PartidaXadrez {
 	public Cor getJogadorAtual() {
 		return jogadorAtual;
 	}
+	
+	public boolean getCheck() {
+		return check;
+	} 
 
 
 	public PecaXadrez[][] getPecas(){
@@ -58,6 +64,14 @@ public class PartidaXadrez {
 		validarPosicaoOrigem(origem);
 		validarPosicaoDestino(origem,destino);
 		Peca capturarPeca = fazerMover(origem, destino);
+		
+		if (testeCheck(jogadorAtual)) {
+			desfazerMovimento(origem, destino, capturarPeca);
+			throw new XadrezException("Voce nao pode se colocar em check");
+		}
+		
+		check = (testeCheck(oponente(jogadorAtual))) ? true : false;
+		
 		proximoTurno();
 		return (PecaXadrez)capturarPeca;
 	}
@@ -69,27 +83,38 @@ public class PartidaXadrez {
 		
 		if (capturarPeca != null) {
 			pecasNoTabuleiro.remove(capturarPeca);
-			pecasCapturadas.add((PecaXadrez)capturarPeca); //dowcast
+			pecasCapturadas.add(capturarPeca); 
 		}
 		return capturarPeca;
 	}
 	
+	private void desfazerMovimento(Posicao origem, Posicao destino, Peca capturarPeca) {
+		Peca p = tabuleiro.removerPeca(destino);
+		tabuleiro.colocarPeca(p, origem);
+		
+		if (capturarPeca != null) {
+		pecasCapturadas.remove(capturarPeca);
+		pecasNoTabuleiro.add(capturarPeca);
+		
+		}
+	}
+	
 	private void validarPosicaoOrigem(Posicao posicao) {
 		if (!tabuleiro.existeUmaPeca(posicao)) {
-			throw new XadrezException("já existe uma peça na posição de origem");
+			throw new XadrezException("ja existe uma peca na posicao de origem");
 		}
 		 if (jogadorAtual != ((PecaXadrez)tabuleiro.peca(posicao)).getCor()) {
 			 throw new XadrezException("Apeça escolhida não é sua");
 		 }
 		 if (!tabuleiro.peca(posicao).existeAlgumMovPossivel()) {
-			 throw new XadrezException("Não existe movimentos possíveis para a peça");
+			 throw new XadrezException("Nao existe movimentos possiveis para a peca");
 		 }
 	
 	 } 
 	
 	private void validarPosicaoDestino(Posicao origem, Posicao destino) {
 		if (!tabuleiro.peca(origem).possivelMovimento(destino)) {
-			throw new XadrezException("A peça escolhida não pode se mover pra posição de destino");
+			throw new XadrezException("A peca escolhida nao pode se mover pra posicao de destino");
 		}
 			
 	}
@@ -97,6 +122,32 @@ public class PartidaXadrez {
 	private void proximoTurno() {
 		turno++;
 		jogadorAtual = (jogadorAtual == Cor.BRANCO) ? Cor.PRETO : Cor.BRANCO;
+	}
+	
+	private Cor oponente(Cor cor) {
+		return (cor == Cor.BRANCO) ? Cor.PRETO : Cor.BRANCO;
+	}
+	
+	private PecaXadrez rei(Cor cor) {
+		List<Peca> list = pecasNoTabuleiro.stream().filter(x -> ((/*dowcast*/PecaXadrez)x).getCor() == cor).collect(Collectors.toList());
+		for (Peca p : list) {
+			if (p instanceof Rei) {
+				return (PecaXadrez)p;
+			}
+		}
+		throw new IllegalStateException("Nao existe o o rei no tabuleiro da cor " + cor);
+	}
+	
+	private boolean testeCheck(Cor cor) {
+		Posicao reiPosicao = rei(cor).getPosicaoXadrez().posicionar();
+		List<Peca> oponentePecas = pecasNoTabuleiro.stream().filter(x -> ((/*dowcast*/PecaXadrez)x).getCor() == oponente(cor)).collect(Collectors.toList());
+		for (Peca p : oponentePecas){
+			boolean[][] mat = p.possiveisMovimentos();
+			if (mat[reiPosicao.getLinha()][reiPosicao.getColuna()]) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private void colocarNovaPeca(char coluna, int linha, PecaXadrez peca ) {

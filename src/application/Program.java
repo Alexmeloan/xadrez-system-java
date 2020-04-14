@@ -19,7 +19,7 @@ public class Program {
 		PartidaXadrez partidaXadrez = new PartidaXadrez();
 		List<PecaXadrez> capturada =  new ArrayList<>();
 		
-		while (true) {
+		while (!partidaXadrez.getCheckMate()) {
 			try {
 				UI.limparTela();
 				UI.printJogador(partidaXadrez, capturada);
@@ -49,8 +49,10 @@ public class Program {
 	        	 System.out.println(e.getMessage());	
 	        	 sc.nextLine();
 				}
-		}
+		    }
+		UI.limparTela();
+		UI.printJogador(partidaXadrez, capturada);
 
-	}
+	    }
 
 }

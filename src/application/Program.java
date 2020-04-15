@@ -24,6 +24,7 @@ public class Program {
 				UI.limparTela();
 				UI.printJogador(partidaXadrez, capturada);
 				System.out.println();
+				System.out.println();
 				System.out.print("Origem: ");
 				PosicaoXadrez origem = UI.lendoPosicaoXadrez(sc);
 				
